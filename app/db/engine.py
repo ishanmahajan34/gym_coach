@@ -17,12 +17,11 @@ class Base(DeclarativeBase):
     pass
 
 
-# Ensure the data directory exists for SQLite
 if settings.DB_URL.startswith("sqlite"):
     db_path = settings.DB_URL.split("///")[-1]
     os.makedirs(os.path.dirname(db_path) or ".", exist_ok=True)
 
-engine = create_async_engine(settings.DB_URL, echo=False, future=True)
+engine = create_async_engine(settings.async_db_url, echo=False, future=True)
 SessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 

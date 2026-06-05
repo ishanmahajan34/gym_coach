@@ -1,27 +1,34 @@
+databases:
+  - name: coach-db
+    plan: free         # 90-day free tier — see TODO below
+    databaseName: coach
+    user: coach
+    # TODO(backup): Before day 90, dump data with:
+    #   pg_dump $DATABASE_URL > backup.sql
+    # Then delete + recreate the DB on Render and restore:
+    #   psql $NEW_DATABASE_URL < backup.sql
+    # Render sends an expiry email at day 75 as a reminder.
+
 services:
   - type: web
     name: gym-coach
     runtime: docker
-    plan: starter          # starter = $7/mo; free tier has no persistent disk
+    plan: free
     healthCheckPath: /
-    disk:
-      name: coach-data
-      mountPath: /data
-      sizeGB: 1
     envVars:
-      - key: PORT
-        value: 8000
       - key: DB_URL
-        value: sqlite+aiosqlite:////data/coach.db
+        fromDatabase:
+          name: coach-db
+          property: connectionString   # Render gives postgresql://...; app upgrades to asyncpg
       - key: SECRET_KEY
         generateValue: true
       - key: PUBLIC_BASE_URL
-        value: https://gym-coach.onrender.com   # update to your actual subdomain
+        value: https://gym-coach.onrender.com   # update after first deploy
       - key: DISABLE_BOT
         value: "true"
       - key: DISABLE_SCHEDULER
         value: "true"
-      # Set these once the Telegram bot is ready (M4):
+      # Uncomment when bot is ready (M4):
       # - key: TELEGRAM_BOT_TOKEN
       #   sync: false
       # - key: TELEGRAM_CHAT_ID

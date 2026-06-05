@@ -16,6 +16,13 @@ class Settings(BaseSettings):
     # Defaults
     TIMEZONE: str = "America/Los_Angeles"
     DB_URL: str = "sqlite+aiosqlite:///./data/coach.db"
+
+    @property
+    def async_db_url(self) -> str:
+        # Render injects postgresql://, SQLAlchemy needs postgresql+asyncpg://
+        if self.DB_URL.startswith("postgresql://"):
+            return self.DB_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return self.DB_URL
     PUBLIC_BASE_URL: str = "http://localhost:8000"
 
     MORNING_NUDGE_HOUR: int = 7
