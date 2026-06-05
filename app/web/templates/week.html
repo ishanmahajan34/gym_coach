@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Week · Coach{% endblock %}
+
+{% block content %}
+<header class="page-header reveal">
+    <div>
+        <h1 class="heading text-3xl">This Week</h1>
+        <p class="eyebrow mt-1">{{ week_label }}</p>
+    </div>
+</header>
+
+<!-- CALENDAR STRIP -->
+<section class="section-block">
+    <div class="cal-strip">
+        {% for day in calendar_days %}
+        <div class="cal-day {% if day.is_today %}is-today{% endif %} {% if day.is_past and not day.workout %}is-past{% endif %}">
+            <span class="cal-weekday">{{ day.label }}</span>
+            <span class="cal-date {% if day.is_today %}cal-date-today{% endif %}">{{ day.date }}</span>
+            {% if day.workout %}
+                <span class="cal-dot cal-dot-{{ day.workout.type }}"></span>
+            {% elif day.committed %}
+                <span class="cal-dot cal-dot-committed"></span>
+            {% else %}
+                <span class="cal-dot-empty"></span>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- WEEKLY GOALS -->
+<section class="section-block">
+    <p class="section-label">Goals</p>
+    <div class="card">
+        {% include "partials/weekly_goals.html" %}
+    </div>
+</section>
+
+<!-- COMMIT YOUR WEEK -->
+<section class="section-block">
+    <p class="section-label">Commit your week</p>
+    <div class="card">
+        <p class="text-fg-muted text-sm mb-4">Which days are you showing up this week?</p>
+        <form method="post" action="/plan/commit">
+            <div class="day-checkboxes">
+                {% for key, label in commit_day_options %}
+                <label class="day-checkbox {% if key in committed_days %}is-checked{% endif %}">
+                    <input type="checkbox" name="days" value="{{ key }}"
+                           {% if key in committed_days %}checked{% endif %}>
+                    <span class="day-cb-label">{{ label }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            <button class="btn btn-primary btn-block mt-4">Lock it in</button>
+        </form>
+    </div>
+</section>
+
+{% endblock %}

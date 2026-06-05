@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}History · Coach{% endblock %}
+
+{% block content %}
+<header class="mb-6 reveal">
+    <h1 class="heading text-3xl">History</h1>
+</header>
+
+{% if days %}
+<div class="history-list">
+    {% for entry in days %}
+    <div class="history-day reveal">
+        <p class="history-date-label">{{ entry.date_label }}</p>
+
+        {% for workout in entry.workouts %}
+        <a href="/workout/{{ workout.id }}" class="history-workout-row history-type-{{ workout.type }}">
+            <div class="history-workout-left">
+                <span class="pill pill-{{ workout.type }}">{{ workout.type | replace('legs_light','squat') | replace('_',' ') | title }}</span>
+                {% if workout.status == 'done' %}
+                    {% if workout.actual_minutes %}<span class="history-meta">{{ workout.actual_minutes }} min</span>{% endif %}
+                    {% if workout.rating %}<span class="history-rating">★ {{ workout.rating }}</span>{% endif %}
+                {% elif workout.status == 'skipped' %}
+                    <span class="history-meta muted">skipped</span>
+                {% else %}
+                    <span class="history-meta muted">{{ workout.status }}</span>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+
+        {% if entry.habit and (entry.habit.stretch_done or entry.habit.balance_done or entry.walk_count > 0) %}
+        <div class="history-habits">
+            {% if entry.habit.stretch_done %}
+                <span class="habit-tag">stretch {{ entry.habit.stretch_minutes or 7 }}m</span>
+            {% endif %}
+            {% if entry.habit.balance_done %}
+                <span class="habit-tag">balance</span>
+            {% endif %}
+            {% if entry.walk_count > 0 %}
+                <span class="habit-tag">{{ entry.walk_count }}× walk</span>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card text-center" style="padding: 3rem 1.5rem;">
+    <p class="text-fg-muted">No history yet. Today's a fine place to start.</p>
+</div>
+{% endif %}
+
+{% endblock %}

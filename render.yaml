@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: gym-coach
+    runtime: docker
+    plan: starter          # starter = $7/mo; free tier has no persistent disk
+    healthCheckPath: /
+    disk:
+      name: coach-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: DB_URL
+        value: sqlite+aiosqlite:////data/coach.db
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PUBLIC_BASE_URL
+        value: https://gym-coach.onrender.com   # update to your actual subdomain
+      - key: DISABLE_BOT
+        value: "true"
+      - key: DISABLE_SCHEDULER
+        value: "true"
+      # Set these once the Telegram bot is ready (M4):
+      # - key: TELEGRAM_BOT_TOKEN
+      #   sync: false
+      # - key: TELEGRAM_CHAT_ID
+      #   sync: false
+      # - key: GEMINI_API_KEY
+      #   sync: false

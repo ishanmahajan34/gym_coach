@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% set active_nav = 'plan' %}
+{% block title %}Week · Coach{% endblock %}
+
+{% block content %}
+<header class="mb-6 reveal">
+    <p class="eyebrow">Week of {{ week_start.strftime('%b %-d') }}</p>
+    <h1 class="heading text-3xl mt-2">The week ahead</h1>
+</header>
+
+<div class="card-elev">
+    <p class="text-fg-muted mb-4">Pick the days you're locking in. Honesty here matters more than ambition.</p>
+
+    <form method="post" action="/plan/commit">
+        <div class="grid gap-2 mb-6">
+            {% for day, label in days %}
+                <label class="card flex items-center justify-between" style="cursor:pointer;">
+                    <span>{{ label }}</span>
+                    <input type="checkbox" name="days" value="{{ day }}" {% if day in committed %}checked{% endif %}>
+                </label>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Lock it in</button>
+    </form>
+</div>
+
+<p class="thought">
+    "It's not what we have in our life, but who we have in our life that counts."
+    — and what we do for that one person, every day, when nobody's watching.
+</p>
+{% endblock %}

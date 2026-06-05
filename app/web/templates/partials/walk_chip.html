@@ -1,0 +1,20 @@
+<div class="walk-chip {% if done %}is-done{% endif %}" id="walk-{{ meal }}">
+  {% if done %}
+    <span class="walk-meal-label">{{ meal_label }}</span>
+    <svg class="chip-check-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+    {% if logged_time %}<span class="chip-time">{{ logged_time }}</span>{% endif %}
+  {% else %}
+    <form hx-post="/habit/walk/{{ meal }}"
+          hx-target="#walk-{{ meal }}"
+          hx-swap="outerHTML"
+          style="display:contents">
+      <button type="submit" class="walk-chip-btn">
+        <span class="walk-meal-label">{{ meal_label }}</span>
+        <span class="chip-hint">tap to log</span>
+      </button>
+    </form>
+  {% endif %}
+</div>

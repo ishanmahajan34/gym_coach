@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Today · Coach{% endblock %}
+
+{% block content %}
+
+<!-- HEADER -->
+<header class="home-header reveal">
+    <div class="home-header-left">
+        <p class="home-date">{{ today_str }}</p>
+        <h1 class="heading home-greeting">{{ greeting }}</h1>
+    </div>
+    <div class="streak-badge">
+        <span class="streak-num">{{ stats.streak }}</span>
+        <span class="streak-lbl">day streak</span>
+    </div>
+</header>
+
+<!-- TODAY'S SESSION -->
+<section class="section-block">
+    <p class="section-label">Today's session</p>
+    {% if workout %}
+    <div class="session-card reveal">
+        <div class="session-card-top">
+            <span class="pill pill-{{ workout.type }}">{{ workout_type_label }}</span>
+            <span class="session-duration">{{ workout.planned_minutes }} min</span>
+        </div>
+        <h2 class="heading session-title">{{ plan_title }}</h2>
+        {% if plan_summary %}<p class="session-summary">{{ plan_summary }}</p>{% endif %}
+        {% if workout.status == 'planned' %}
+            <form method="post" action="/workout/{{ workout.id }}/start">
+                <button class="btn btn-primary btn-block mt-4">Start session</button>
+            </form>
+        {% elif workout.status == 'in_progress' %}
+            <a href="/workout/{{ workout.id }}" class="btn btn-primary btn-block mt-4">Continue →</a>
+        {% else %}
+            <a href="/workout/{{ workout.id }}" class="btn btn-ghost btn-block mt-4">Review ✓</a>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="session-card reveal">
+        <p class="session-empty-text">No session planned yet.</p>
+        <form method="post" action="/workout/today/plan">
+            <button class="btn btn-primary btn-block mt-4">Plan today's workout</button>
+        </form>
+    </div>
+    {% endif %}
+</section>
+
+<!-- THIS WEEK (mini goals — above the fold) -->
+<section class="section-block">
+    <div class="section-header-row">
+        <p class="section-label">This week</p>
+        <a href="/week" class="section-link">Full view →</a>
+    </div>
+    <div class="card">
+        {% include "partials/weekly_goals.html" %}
+    </div>
+</section>
+
+<!-- DAILY HABITS -->
+<section class="section-block">
+    <p class="section-label">Daily habits</p>
+    <div class="habit-row">
+        {% set name = "stretch" %}
+        {% set label = "Stretch" %}
+        {% set done = today_habit.stretch_done %}
+        {% set logged_time = stretch_logged_time %}
+        {% set default_minutes = 7 %}
+        {% include "partials/habit_chip.html" %}
+
+        {% set name = "balance" %}
+        {% set label = "Balance" %}
+        {% set done = today_habit.balance_done %}
+        {% set logged_time = balance_logged_time %}
+        {% set default_minutes = 3 %}
+        {% include "partials/habit_chip.html" %}
+    </div>
+</section>
+
+<!-- MEAL WALKS -->
+<section class="section-block">
+    <p class="section-label">Meal walks <span class="section-label-note">· 10 min each</span></p>
+    <div class="walk-row">
+        {% set meal = "breakfast" %}
+        {% set meal_label = "Breakfast" %}
+        {% set done = today_habit.walk_breakfast_at is not none %}
+        {% set logged_time = walk_breakfast_logged_time %}
+        {% include "partials/walk_chip.html" %}
+
+        {% set meal = "lunch" %}
+        {% set meal_label = "Lunch" %}
+        {% set done = today_habit.walk_lunch_at is not none %}
+        {% set logged_time = walk_lunch_logged_time %}
+        {% include "partials/walk_chip.html" %}
+
+        {% set meal = "dinner" %}
+        {% set meal_label = "Dinner" %}
+        {% set done = today_habit.walk_dinner_at is not none %}
+        {% set logged_time = walk_dinner_logged_time %}
+        {% include "partials/walk_chip.html" %}
+    </div>
+</section>
+
+{% if thought %}
+<blockquote class="thought reveal">{{ thought }}</blockquote>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,21 @@
+<div class="goals-list">
+  {% set goal_items = [
+    ("Low cardio",   goals.cardio_low_min,  goals.cardio_low_target,  goals.cardio_low_pct,  "min"),
+    ("High cardio",  goals.cardio_high_min, goals.cardio_high_target, goals.cardio_high_pct, "min"),
+    ("Strength",     goals.strength_days,   goals.strength_target,    goals.strength_pct,    "days"),
+    ("Daily habits", goals.habit_days,      goals.habit_days_target,  goals.habit_days_pct,  "days"),
+  ] %}
+  {% for label, val, target, pct, unit in goal_items %}
+  <div class="goal-row">
+    <div class="goal-meta">
+      <span class="goal-label">{{ label }}</span>
+      <span class="goal-value">
+        <span class="goal-val-num {% if pct >= 100 %}goal-val-done{% endif %}">{{ val }}</span><span class="goal-val-sep">/{{ target }} {{ unit }}</span>
+      </span>
+    </div>
+    <div class="goal-bar-track">
+      <div class="goal-bar-fill {% if pct >= 100 %}is-done{% endif %}" style="width: {{ pct }}%"></div>
+    </div>
+  </div>
+  {% endfor %}
+</div>

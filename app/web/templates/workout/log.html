@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% set active_nav = 'home' %}
+{% block title %}{{ workout.type | replace('_', ' ') | title }} · Coach{% endblock %}
+
+{% block content %}
+<header class="mb-6 reveal">
+    <p class="eyebrow">{{ workout.date.strftime('%A · %b %-d') }}</p>
+    <h1 class="heading text-3xl mt-2">{{ plan_title }}</h1>
+    <div class="flex gap-2 mt-3">
+        <span class="pill pill-accent">{{ workout.type | replace('_', ' ') }}</span>
+        <span class="pill">{{ workout.planned_minutes }} min</span>
+        {% if workout.status == 'done' %}<span class="pill">Done</span>{% endif %}
+    </div>
+</header>
+
+{% if workout.status != 'done' and cardio %}
+<div class="card mb-6">
+    <div class="flex items-center justify-between mb-3">
+        <p class="eyebrow">Cardio · {{ cardio.machine }}</p>
+        <span class="pill">{{ cardio.duration_min }} min</span>
+    </div>
+    <div class="cardio-steps">
+        {% for step in cardio.steps %}
+        <div class="cardio-step">
+            <span class="cardio-arrow">→</span>
+            <span>{{ step }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    <p class="cardio-note">{{ cardio.goal_note }}</p>
+</div>
+{% endif %}
+
+<div class="grid gap-4" id="exercise-list">
+    {% for ex_group in exercises_grouped %}
+        {% set ex = ex_group.first_set %}
+        {% set ex_info = catalog.get(ex.exercise_slug) %}
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <div>
+                    <div class="exercise-name">{{ ex.exercise_name }}</div>
+                    <div class="text-xs text-fg-faint mt-1 font-mono uppercase tracking-wider">
+                        {{ ex.muscle_group }}
+                    </div>
+                    {% if ex_info and ex_info.notes %}
+                    <div class="text-xs text-fg-faint mt-1 italic">{{ ex_info.notes }}</div>
+                    {% endif %}
+                </div>
+                {% if ex_group.last_perf %}
+                    <div class="text-xs text-fg-faint text-right">
+                        last session<br>
+                        <span class="font-mono text-fg-muted">{{ ex_group.last_perf.actual_weight | int }} lb × {{ ex_group.last_perf.actual_reps }}</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% for s in ex_group.sets %}
+                {% include "partials/set_row.html" %}
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+
+{% if workout.status != 'done' %}
+<div class="mt-8">
+    <button
+        class="btn btn-primary btn-block"
+        hx-get="/workout/{{ workout.id }}/finish-form"
+        hx-target="#finish-modal"
+        hx-swap="innerHTML"
+    >
+        Finish session
+    </button>
+</div>
+<div id="finish-modal"></div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,17 @@
+[Unit]
+Description=Gym Coach webapp
+After=network.target
+
+[Service]
+Type=simple
+User=coach
+WorkingDirectory=/opt/gym_coach
+EnvironmentFile=/opt/gym_coach/.env
+ExecStart=/opt/gym_coach/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

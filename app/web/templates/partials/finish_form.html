@@ -1,0 +1,39 @@
+<div class="card-elev mt-6 reveal">
+    <h3 class="heading text-xl mb-4">How'd it go?</h3>
+    <form method="post" action="/workout/{{ workout.id }}/finish">
+
+        <div class="finish-section">
+            <p class="eyebrow mb-2">Cardio logged</p>
+            <div class="cardio-inputs">
+                <label class="cardio-input-label">
+                    <span>Low-intensity (min)</span>
+                    <input type="number" name="cardio_minutes_low"
+                           value="{{ suggested_cardio_low }}" min="0" max="120"
+                           inputmode="numeric" class="cardio-input">
+                </label>
+                <label class="cardio-input-label">
+                    <span>High-intensity (min)</span>
+                    <input type="number" name="cardio_minutes_high"
+                           value="{{ suggested_cardio_high }}" min="0" max="120"
+                           inputmode="numeric" class="cardio-input">
+                </label>
+            </div>
+            <p class="finish-hint">Meal walks count separately. These are gym cardio minutes.</p>
+        </div>
+
+        <p class="eyebrow mb-2">Rating</p>
+        <div class="flex gap-2 mb-6">
+            {% for n in [1,2,3,4,5] %}
+                <label class="flex-1">
+                    <input type="radio" name="rating" value="{{ n }}" class="hidden peer" {% if n == 4 %}checked{% endif %}>
+                    <span class="block btn btn-ghost btn-sm w-full">{{ n }}</span>
+                </label>
+            {% endfor %}
+        </div>
+
+        <p class="eyebrow mb-2">Notes (optional)</p>
+        <textarea name="notes" rows="2" placeholder="Anything worth remembering"></textarea>
+
+        <button type="submit" class="btn btn-primary btn-block mt-6">Save & finish</button>
+    </form>
+</div>
